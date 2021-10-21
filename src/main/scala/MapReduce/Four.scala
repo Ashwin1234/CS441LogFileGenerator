@@ -20,8 +20,8 @@ import scala.collection.JavaConverters.*
 
 
 
-// This class performs the map operation, translating raw input into the key-value
-// pairs we will feed into our reduce operation.
+// This class performs the map operation, translating raw input into the key-value of keys being the type of message and value being the length of the message
+// It will feed the output to the reducer
 class LongestMessageMap extends Mapper[Object,Text,Text,IntWritable] {
 
   val word = new Text
@@ -33,6 +33,7 @@ class LongestMessageMap extends Mapper[Object,Text,Text,IntWritable] {
     val t =  value.toString().split(" ")(2)
     var str = value.toString()
 
+    //pattern matching to match the string to the regex pattern
     val pattern = config.getString("regex_pattern").r
     pattern.findFirstMatchIn(str) match {
       case Some(pat) => {
@@ -66,9 +67,8 @@ class LongestMessageMap extends Mapper[Object,Text,Text,IntWritable] {
   }
 }
 
-// This class performs the reduce operation, iterating over the key-value pairs
-// produced by our map operation to produce a result. In this case we just
-// calculate a simple total for each word seen.
+// This class performs the reduce operation, iterating over the key-value pairs to find the max of Iterable[IntWritable] which is the maximum length of message of each type in
+// the log files.
 class LongestMessageReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   /*def findMax(x: Int, y: Int): Int = {
     val winner = x max y
@@ -82,18 +82,17 @@ class LongestMessageReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   }
 }
 
-// This class configures and runs the job with the map and reduce classes we've
-// specified above.
+
 object Four {
   def main(args:Array[String]):Int = {
     logger.info(s"value $args");
     val conf = new Configuration()
     val otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs
     if (otherArgs.length != 2) {
-      println("Usage: wordcount <in> <out>")
+      println("invalid")
       return 2
     }
-    val job = new Job(conf, "pattern count")
+    val job = new Job(conf, "message type distribution for max length")
     conf.set("mapred.textoutputformat.separatorText", ",")
     job.setJarByClass(classOf[LongestMessageMap])
     job.setMapperClass(classOf[LongestMessageMap])

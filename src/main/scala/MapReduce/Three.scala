@@ -18,8 +18,9 @@ import scala.collection.JavaConverters.*
 
 
 
-// This class performs the map operation, translating raw input into the key-value
-// pairs we will feed into our reduce operation.
+// This class performs the map operation, translating raw input into the key-value of keys being the type of message and value being 1 
+// It will feed the output to the reducer
+
 class MessageTypeMap extends Mapper[Object,Text,Text,IntWritable] {
   val one = new IntWritable(1)
   val word = new Text
@@ -33,9 +34,8 @@ class MessageTypeMap extends Mapper[Object,Text,Text,IntWritable] {
   }
 }
 
-// This class performs the reduce operation, iterating over the key-value pairs
-// produced by our map operation to produce a result. In this case we just
-// calculate a simple total for each word seen.
+// This class performs the reduce operation, iterating over the key-value pairs to find the sum of Iterable[IntWritable] which is the number of messages of each type 
+// in the log files.
 class MessageTypeReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   override
   def reduce(key:Text, values:java.lang.Iterable[IntWritable], context:Reducer[Text,IntWritable,Text,IntWritable]#Context) = {
@@ -44,18 +44,17 @@ class MessageTypeReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   }
 }
 
-// This class configures and runs the job with the map and reduce classes we've
-// specified above.
+
 object Three {
   def main(args:Array[String]):Int = {
     logger.info(s"value $args");
     val conf = new Configuration()
     val otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs
     if (otherArgs.length != 2) {
-      println("Usage: wordcount <in> <out>")
+      println("invalid")
       return 2
     }
-    val job = new Job(conf, "pattern count")
+    val job = new Job(conf, "message type distribution")
     job.setJarByClass(classOf[MessageTypeMap])
     job.setMapperClass(classOf[MessageTypeMap])
     job.setCombinerClass(classOf[MessageTypeReducer])

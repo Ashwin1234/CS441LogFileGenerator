@@ -3,15 +3,15 @@ The goal of this homework is to use Hadoop map/reduce framework in scala to gene
 
 AWS deployment video - [link](https://www.youtube.com/watch?v=A3g_ttNZq98)
 ## Prerequisites
-Since we are using Hadoop, require Hadoop 3.0.1 installed on Windows 10.
-SBT installed and configured in Intellij
-Scala 3.0.1
+Since we are using Hadoop, require Hadoop 3.0.1 installed on Windows 10. <br>
+SBT installed and configured in Intellij. <br>
+Scala 3.0.1. <br>
 
 ## Instructions to run
 clone the repo - ```https://github.com/Ashwin1234/CS441LogFileGenerator.git``` <br>
 First step is to generate the jar file in Intellij.
 run the command - ```sbt clean compile assembly``` this will generate the jar file. Then copy this jar file into a folder which has access. <br>
-Run the hadoop clusters. <br>
+Run the hadoop clusters by running ```Start-all.cmd``` with cmd in admin mode in sbin folder. <br>
 Create an input folder by executing command - ```hadoop fs -mkdir /input_dir``` <br>
 Copy the input log files (input_file.txt) into this folder - ```hadoop fs -put C:/input_file.txt /input_dir``` <br>
 Run the command - ```hadoop jar C:/LogFileGenerator-assembly-0.1.jar MapReduce.<Task Number> /input_dir /output_dir``` this will start the hadoop map/reduce job. <br>

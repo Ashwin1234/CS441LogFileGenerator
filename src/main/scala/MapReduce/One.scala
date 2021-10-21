@@ -17,8 +17,8 @@ import org.apache.hadoop.util.GenericOptionsParser
 
 import scala.util.matching.Regex
 import scala.collection.JavaConverters.*
-// This class performs the map operation, translating raw input into the key-value
-// pairs we will feed into our reduce operation.
+// This class performs the map operation, translating raw input into the key-value with key being the time interval and message type and value being 1.
+// It will feed the output to the reducer
 class TokenizerMapper extends Mapper[Object,Text,Text,IntWritable] {
   val zero = new IntWritable(0)
   val one = new IntWritable(1)
@@ -31,7 +31,7 @@ class TokenizerMapper extends Mapper[Object,Text,Text,IntWritable] {
      val t =  value.toString().split(" ")(2)
      val str = value.toString()
     //val pattern = "/^[a-zA-Z0-9!@#$%^&*()_<>;/~:]$/".r
-    
+
     val pattern = config.getString("regex_pattern").r
 /*      str match {
         case pattern => {
@@ -44,6 +44,7 @@ class TokenizerMapper extends Mapper[Object,Text,Text,IntWritable] {
         word.set(t)
         context.write(word,one)
      }*/
+     //Pattern matching to match the input strings to a particular regex pattern
        val res =  pattern.findFirstMatchIn(str)
        res match {
          case Some(pattern) => {
@@ -100,9 +101,8 @@ class TokenizerMapper extends Mapper[Object,Text,Text,IntWritable] {
   }
 }
 
-// This class performs the reduce operation, iterating over the key-value pairs
-// produced by our map operation to produce a result. In this case we just
-// calculate a simple total for each word seen.
+// This class performs the reduce operation, iterating over the key-value pairs to find the sum of Iterable[IntWritable] with key being the time interval - message type and
+// value being the number of that message type in that time intervals.
 class IntSumReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   override
   def reduce(key:Text, values:java.lang.Iterable[IntWritable], context:Reducer[Text,IntWritable,Text,IntWritable]#Context) = {
@@ -111,18 +111,17 @@ class IntSumReducer extends Reducer[Text,IntWritable,Text,IntWritable] {
   }
 }
 
-// This class configures and runs the job with the map and reduce classes we've
-// specified above.
+
 object One {
   def main(args:Array[String]):Int = {
     logger.info(s"value $args");
     val conf = new Configuration()
     val otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs
     if (otherArgs.length != 2) {
-      println("Usage: wordcount <in> <out>")
+      println("invalid")
       return 2
     }
-    val job = new Job(conf, "pattern count")
+    val job = new Job(conf, "message distribution in each interval")
     job.setJarByClass(classOf[TokenizerMapper])
     job.setMapperClass(classOf[TokenizerMapper])
     job.setCombinerClass(classOf[IntSumReducer])

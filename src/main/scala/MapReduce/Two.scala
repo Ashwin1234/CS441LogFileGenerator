@@ -25,6 +25,9 @@ import math.Ordering.Implicits.infixOrderingOps
 import math.Ordered.orderingToOrdered
 
 
+// This class performs the map operation, translating raw input into the key-value of keys being timestamps and value being 1 if it is an error message
+// It will feed the output to the reducer
+
 class IntervalMap extends Mapper[Object,Text,Text,IntWritable]{
 
   val one = new IntWritable(1)
@@ -38,6 +41,7 @@ class IntervalMap extends Mapper[Object,Text,Text,IntWritable]{
     val str = value.toString()
     //val pattern = "/^[a-zA-Z0-9!@#$%^&*()_]$/".r
 
+    //pattern matching to match the string to the regex pattern 
     val pattern = config.getString("regex_pattern").r
     pattern.findFirstMatchIn(str) match {
       case Some(pattern) => {
@@ -56,6 +60,9 @@ class IntervalMap extends Mapper[Object,Text,Text,IntWritable]{
   }
 }
 
+// This class performs the reduce operation, iterating over the key-value pairs to find the sum of Iterable[IntWritable] which is the number of ERROR messages in the 
+// time interval
+
 class ReducerMap extends Reducer[Text,IntWritable,Text,IntWritable] {
   val result_map = Map[String,Int]()
   override
@@ -64,7 +71,7 @@ class ReducerMap extends Reducer[Text,IntWritable,Text,IntWritable] {
     result_map+=(key.toString() -> sum.toInt)
 
   }
-
+// cleanup function to sort the output of reducers by value to find the time interval with highest number of ERROR messages
   override
   def cleanup(context: Reducer[Text, IntWritable, Text, IntWritable]#Context): Unit = {
     val list = result_map.toList.sortWith((x,y) => y._2<x._2)
@@ -80,10 +87,10 @@ object Two {
     val conf = new Configuration()
     val otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs
     if (otherArgs.length != 2) {
-      println("Usage: wordcount <in> <out>")
+      println("invalid")
       return 2
     }
-    val job = new Job(conf, "interval count")
+    val job = new Job(conf, "Error message in each interval")
     job.setJarByClass(classOf[IntervalMap])
     job.setMapperClass(classOf[IntervalMap])
     job.setCombinerClass(classOf[ReducerMap])
