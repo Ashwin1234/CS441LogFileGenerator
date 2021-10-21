@@ -7,7 +7,7 @@ Since we are using Hadoop, require Hadoop 3.0.1 installed on Windows 10. <br>
 SBT installed and configured in Intellij. <br>
 Scala 3.0.1. <br>
 
-## Instructions to run
+## Instructions to run locally in hadoop
 clone the repo - ```https://github.com/Ashwin1234/CS441LogFileGenerator.git``` <br>
 First step is to generate the jar file in Intellij.
 run the command - ```sbt clean compile assembly``` this will generate the jar file. Then copy this jar file into a folder which has access. <br>
@@ -220,4 +220,4 @@ In this example I have calculated the length of the longest string in each messa
 2) Test to check the time interval
 
 ## Future work
-A more complex problem can be solved by using the Map/Reduce concept.
+A more complex problem can be solved by using the Map/Reduce concept and deployed in AWS.
