@@ -10,12 +10,11 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover -->
             <fileNamePattern>log/LogFileGenerator.%d{yyyy-MM-dd}.log</fileNamePattern>
-
             <maxHistory>100</maxHistory>
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level - %msg%n</pattern>
+            <pattern>%d{HHmm:s:s.SSS} [%thread] %-5level - %msg%n</pattern>
         </encoder>
     </appender>
 

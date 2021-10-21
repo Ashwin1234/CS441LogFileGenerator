@@ -1,3 +1,5 @@
+
+
 name := "LogFileGenerator"
 
 version := "0.1"
@@ -23,5 +25,14 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % scalacticVersion % Test,
   "org.scalatest" %% "scalatest-featurespec" % scalacticVersion % Test,
   "com.typesafe" % "config" % typesafeConfigVersion,
-  "com.github.mifmif" % "generex" % generexVersion
+  "com.github.mifmif" % "generex" % generexVersion,
 )
+assembly / assemblyMergeStrategy := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
+libraryDependencies += "org.apache.hadoop" % "hadoop-core" % "1.2.1"
+
+
+
+

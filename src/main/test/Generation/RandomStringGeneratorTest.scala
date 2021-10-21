@@ -15,8 +15,11 @@ import HelperUtils.Parameters
 import com.mifmif.common.regex.Generex
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.PrivateMethodTester
+
 import language.deprecated.symbolLiterals
 import org.scalatest.matchers.should.Matchers
+import MapReduce.One
+import com.typesafe.config.{Config, ConfigFactory}
 
 class RandomStringGeneratorTest extends AnyFlatSpec with Matchers with PrivateMethodTester {
   behavior of "random string generation"
@@ -24,6 +27,7 @@ class RandomStringGeneratorTest extends AnyFlatSpec with Matchers with PrivateMe
   private val minStringLength = 1
   private val maxStringLength = 10
   private val randomSeed = 1
+  val config: Config = ConfigFactory.load("application.conf").getConfig("TaskGenerator")
 
   val INITSTRING = "Starting the string generation"
   val init = unit(INITSTRING)
@@ -73,6 +77,13 @@ class RandomStringGeneratorTest extends AnyFlatSpec with Matchers with PrivateMe
     val callConstruct = PrivateMethod[String]('constructString)
     val result:String = rsg invokePrivate callConstruct(someString, 10)
     result startsWith(someString)
+  }
+
+  it should "ragex pattern" in {
+    config.getString("regex_pattern") should be "(.*?)"
+  }
+  it should "time interval" in {
+    config.getInt("time_interval") should be 1
   }
 
 }
