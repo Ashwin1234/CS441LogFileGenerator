@@ -1,4 +1,4 @@
-# Homework 2
+# Homework 2 - Ashwin Bhaskar Srivatsa
 The goal of this homework is to use Hadoop map/reduce framework in scala to generate distributions of type log messages according to given regex pattern and time interval.
 
 AWS deployment video - [video link](https://www.youtube.com/watch?v=A3g_ttNZq98)
